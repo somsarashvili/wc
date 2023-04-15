@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import * as L from 'leaflet';
 
@@ -10,7 +11,7 @@ export class MapComponent implements OnInit, OnDestroy {
   @Output() map$: EventEmitter<L.Map> = new EventEmitter;
   @Output() zoom$: EventEmitter<number> = new EventEmitter;
 
-  constructor() {
+  constructor(private http: HttpClient) {
   }
 
   map?: L.Map;
@@ -27,19 +28,16 @@ export class MapComponent implements OnInit, OnDestroy {
     center: L.latLng(41.730811, 44.779581)
   }
   greenIcon = L.icon({
-    iconUrl: 'https://leafletjs.com/examples/custom-icons/leaf-green.png',
-    shadowUrl: 'https://leafletjs.com/examples/custom-icons/leaf-shadow.png',
+    iconUrl: '/assets/wc.png',
 
-    iconSize: [38, 95], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+    iconSize: [38, 38], // size of the icon
+    iconAnchor: [22, 38], // point of the icon which will correspond to marker's location
+    popupAnchor: [-3, -38] // point from which the popup should open relative to the iconAnchor
   });
   markers: L.Marker[] = [
-    L.marker([41.730811, 44.779581], {icon: this.greenIcon}).bindPopup('First Pin'),
-    L.marker([41.7261055606886, 44.74963733728571], {icon: this.greenIcon}).bindPopup('Second Pin'),
-    L.marker([41.72982084314337, 44.74620410987881], {icon: this.greenIcon}).bindPopup('Third Pin')
+    L.marker([41.730811, 44.779581], { icon: this.greenIcon }).bindPopup('მაღლა, დაბლა, სადღაც მანდა'),
+    L.marker([41.7261055606886, 44.74963733728571], { icon: this.greenIcon }).bindPopup('Second Pin'),
+    L.marker([41.72982084314337, 44.74620410987881], { icon: this.greenIcon }).bindPopup('Third Pin')
   ];
 
 
@@ -60,8 +58,15 @@ export class MapComponent implements OnInit, OnDestroy {
   };
 
   addMarkers() {
-    this.markers.forEach(marker => {
-      marker.addTo(this.map!);
-    });
+    this.http.get<any[]>('/assets/wc.json').subscribe(data => {
+
+      data.forEach(marker => {
+        L.marker(
+          [marker.lat, marker.lng],
+          { icon: this.greenIcon })
+          .bindPopup(marker.description)
+          .addTo(this.map!);
+      });
+    })
   }
 }
