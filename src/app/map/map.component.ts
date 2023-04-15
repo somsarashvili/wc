@@ -1,10 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import * as L from 'leaflet';
-import 'leaflet.awesome-markers/dist/leaflet.awesome-markers';
-import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import { library } from '@fortawesome/fontawesome-svg-core';
-
-library.add(faMapMarkerAlt);
 
 @Component({
   selector: 'app-map',
